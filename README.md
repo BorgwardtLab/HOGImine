@@ -6,7 +6,7 @@ genetic variants. Moreover, our method can exploit prior biological knowledge on
 gene interactions, such as protein-protein interaction networks, genetic pathways and protein complexes,
 to restrict its search space.
 
-We provide two versions, HOGImine-binary, that accepts binary encodings for the markers, and HOGImine-additive, that accepts additive encodings.
+HOGImine accepts both binary encodings and additive encodings for the markers.
 
 ### Compilation
 Compilation uses make. Currently the code is compiled with ```gcc-12```, but other compilers might work as well.
@@ -16,25 +16,23 @@ make
 ```
 
 ### Options
-The options for HOGImine-binary are:
-- ```-i file```: marker file
+The options for HOGImine are:
+- ```-i file```: marker (binary or additive encoding) file
 - ```-l file```: labels file
 - ```-s file```: snp names file
 - ```-c file```: covariate file
 - ```-m file```: snp map file
 - ```-e file```: edge file
 - ```-f level```: target fwer
-- ```-o file```: output file name
+- ```-o or -O file```: output file name, with -o in compressed format and with -O in verbose format
 - ```-p p```: number $p$ of permutations (default $0$), if $p > 0$ it runs a permutation testing procedure
 - ```-d d```: maximum interval length
 - ```-v```: outputs all the testable patterns
 
-The options for HOGImine-additive are the same, with the following changes:
-- ```-i file```: marker (with dominant encoding) file
-- ```-h file```: marker (with recessive encoding) file
 
 
 ### Usage example
 ```
-./HOGImine-binary/hogimine_binary -i data/athaliana/interactome_0kb/avrRpm1/avrRpm1_X.txt -l data/athaliana/interactome_0kb/avrRpm1/avrRpm1_Y.txt -c data/athaliana/covar_snps/avrRpm1/avrRpm1_covar_n2.txt -s data/athaliana/interactome_0kb/avrRpm1/avrRpm1_snpID.txt -m data/athaliana/interactome_0kb/avrRpm1/avrRpm1_snp_map.txt -e data/athaliana/athal_ppi/interactome/AI_interactions_genes.txt -f 0.05 -o out_athaliana
+./src/hogimine_additive -i data/athaliana/interactome_0kb/avrRpm1/avrRpm1_X.txt -l data/athaliana/interactome_0kb/avrRpm1/avrRpm1_Y.txt -c data/athaliana/covar_snps/avrRpm1/avrRpm1_covar_n2.txt -s data/athaliana/interactome_0kb/avrRpm1/avrRpm1_snpID.txt -m data/athaliana/interactome_0kb/avrRpm1/avrRpm1_snp_map.txt -e data/athaliana/athal_ppi/interactome/AI_interactions_genes.txt -f 0.05 -O out_athaliana
 ```
+
