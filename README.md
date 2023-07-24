@@ -4,9 +4,13 @@ Compared to the state-of-the-art miners, it expands the class of discoverable ge
 by considering higher-order interactions of genes and by allowing multiple encodings for the
 genetic variants. Moreover, our method can exploit prior biological knowledge on
 gene interactions, such as protein-protein interaction networks, genetic pathways and protein complexes,
-to restrict its search space.
+to restrict its search space. HOGImine accepts both binary encodings and additive encodings for the markers.
 
-HOGImine accepts both binary encodings and additive encodings for the markers.
+
+### Citing our work 
+HOGImine is described in the following paper:
+> Paolo Pellizzoni, Giulia Muzio and Karsten Borgwardt. *Higher-order genetic interaction discovery with network-based biological priors.* ISMB 2023. 
+
 
 ### Compilation
 Compilation uses make. Currently the code is compiled with ```gcc-12```, but other compilers might work as well.
