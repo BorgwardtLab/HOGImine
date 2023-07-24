@@ -6,6 +6,9 @@ genetic variants. Moreover, our method can exploit prior biological knowledge on
 gene interactions, such as protein-protein interaction networks, genetic pathways and protein complexes,
 to restrict its search space. HOGImine accepts both binary encodings and additive encodings for the markers.
 
+| ![](HogiMine.png) |
+|:--| 
+| *Examples of meta-markers considered by HOGImine. **(a)** The dataset features, for each sample, a vector of genetic markers with additive encoding. The markers are subdivided into genes, in the figure highlighted by pale colors. **(b)** Information on the interactions among genes if usually provided via a PPI network. **(c)** The black solid meta-marker (shown in Panel a) spans three genomic intervals in the violet, yellow and azure genes, which form a connected subgraph in the network, using the dominant encoding for all three. **(d)** The black dashed meta-marker spans three genomic intervals in the yellow, green and red genes, which form a connected subgraph in the network, using the recessive encoding for all three.*|
 
 ### Citing our work 
 HOGImine is described in the following paper:
@@ -27,7 +30,7 @@ The options for HOGImine are:
 - ```-c file```: covariate file
 - ```-m file```: snp map file
 - ```-e file```: edge file
-- ```-f level```: target fwer
+- ```-f level```: target fwer (e.g. 0.05)
 - ```-o or -O file```: output file name, with -o in compressed format and with -O in verbose format
 - ```-p p```: number $p$ of permutations (default $0$), if $p > 0$ it runs a permutation testing procedure
 - ```-d d```: maximum interval length
