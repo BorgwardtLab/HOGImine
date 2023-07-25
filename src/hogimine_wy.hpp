@@ -308,7 +308,7 @@ public:
             support = old_supp;
         }
         // homozygote
-        for(int start=0; start<n_snps; start++){
+        for(int start=0; data->is_additive && start<n_snps; start++){
             if(depth == 0){
                 support = gene_itvl[1][depth][start][0];
             }
@@ -418,8 +418,22 @@ public:
 
         double thr = cmh.corr_threshold();
         ofstream sign_file(output_filename+"_sign.txt");
+        vector<tuple<vector<int>, double>> sign_patterns;
+        for(auto& a : testable_patterns){
+            vector<int> pat = get<0>(a);
+            double pv = get<1>(a);
+            if(pv <= thr){
+                sign_patterns.push_back(a);
+            }
+        }
+        std::sort(sign_patterns.begin(), sign_patterns.end(), 
+            [](tuple<vector<int>, double> const &t1, tuple<vector<int>, double> const &t2) {
+                return get<1>(t1) < get<1>(t2);
+            }
+        );
+
         if(!verbose){
-            for(auto& a : testable_patterns){
+            for(auto& a : sign_patterns){
                 vector<int> pat = get<0>(a);
                 double pv = get<1>(a);
                 if(pv <= thr){
@@ -434,7 +448,7 @@ public:
             }
         }
         else{
-            for(auto& a : testable_patterns){
+            for(auto& a : sign_patterns){
                 vector<int> pat = get<0>(a);
                 double pv = get<1>(a);
                 if(pv <= thr){
@@ -446,7 +460,8 @@ public:
                         int startsnp = ((ii&((1<<30)-1))>>14);
                         int lenghtsnp = (ii&((1<<14)- 1));
                         int encgene = (ii>>30);
-                        sign_file <<  genen << " (" << (encgene==0 ? "recessive" : "dominant") << ")";
+                        if(data->is_additive) sign_file <<  genen << " (" << (encgene==0 ? "recessive" : "dominant") << ")";
+                        else sign_file << genen;
                         if(i < (pat.size()/2 -1)) sign_file << ", ";
                         else sign_file << "; ";
 

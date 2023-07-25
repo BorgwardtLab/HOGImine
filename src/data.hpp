@@ -11,6 +11,7 @@ class Data{
 public:
     int n_trans;
     int n_snps;
+    int is_additive;
     vector<Bitset> matrix;
     vector<Bitset> matrix2;
     Bitset labels;
@@ -51,9 +52,13 @@ public:
 
         load_covars(cov_f, sort_id);
         load_labels(labels_f, sort_id);
-        load_matrix(data_f, sort_id);
-        load_matrix2(data_f, sort_id);
-
+        int found1 = load_matrix(data_f, sort_id);
+        int found2 = load_matrix2(data_f, sort_id);
+        is_additive = found1 & found2;
+        if(!is_additive){
+            matrix = matrix2;
+        }
+        
         load_snps(snps_f);
 
         // make sure 1 is minority class
@@ -139,10 +144,11 @@ public:
         }
     }
 
-    void load_matrix(string namef, vector<int>& sort_id){
+    int load_matrix(string namef, vector<int>& sort_id){
         string line;
         stringstream ss_line;
 
+        int found = 0;
         int value;
         int row_idx = 0;
         int col_idx = 0;
@@ -152,7 +158,10 @@ public:
             matrix[row_idx] = Bitset(n_trans);
             ss_line << line;
             while(ss_line >> value){
-                if(value == 2) matrix[row_idx].set( sort_id[col_idx] ); // set matrix[snp][trans] = 1
+                if(value == 2){ 
+                    matrix[row_idx].set( sort_id[col_idx] ); // set matrix[snp][trans] = 1
+                    found = 1;
+                }
                 col_idx ++;
             }
             ss_line.clear();
@@ -160,12 +169,14 @@ public:
             col_idx = 0;
         }
         f.close();
+        return found;
     }
 
-    void load_matrix2(string namef, vector<int>& sort_id){
+    int load_matrix2(string namef, vector<int>& sort_id){
         string line;
         stringstream ss_line;
 
+        int found = 0;
         int value;
         int row_idx = 0;
         int col_idx = 0;
@@ -175,7 +186,10 @@ public:
             matrix2[row_idx] = Bitset(n_trans);
             ss_line << line;
             while(ss_line >> value){
-                if(value >= 1) matrix2[row_idx].set( sort_id[col_idx] ); // set matrix[snp][trans] = 1
+                if(value >= 1){
+                    matrix2[row_idx].set( sort_id[col_idx] ); // set matrix[snp][trans] = 1
+                    found = 1;
+                }
                 col_idx ++;
             }
             ss_line.clear();
@@ -183,6 +197,7 @@ public:
             col_idx = 0;
         }
         f.close();
+        return found;
     }
 
     void load_labels(string namef, vector<int>& sort_id){
