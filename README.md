@@ -12,34 +12,41 @@ to restrict its search space. HOGImine accepts both binary encodings and additiv
 
 ### Citing our work 
 HOGImine is described in the following paper:
-> Paolo Pellizzoni, Giulia Muzio and Karsten Borgwardt. *Higher-order genetic interaction discovery with network-based biological priors.* ISMB 2023. 
+> Paolo Pellizzoni, Giulia Muzio and Karsten Borgwardt. *Higher-order genetic interaction discovery with network-based biological priors.* ISMB 2023. [[PDF online]](https://academic.oup.com/bioinformatics/article/39/Supplement_1/i523/7210485?login=false) 
 
 
 ### Compilation
 Compilation uses make. Currently the code is compiled with ```gcc-12```, but other compilers might work as well.
 ```
-cd HOGImine-binary
+cd src
 make
 ```
 
 ### Options
 The options for HOGImine are:
-- ```-i file```: marker (binary or additive encoding) file
-- ```-l file```: labels file
-- ```-s file```: snp names file
-- ```-c file```: covariate file
-- ```-m file```: snp map file
-- ```-e file```: edge file
-- ```-f level```: target fwer (e.g. 0.05)
-- ```-o or -O file```: output file name, with -o in compressed format and with -O in verbose format
-- ```-p p```: number $p$ of permutations (default $0$), if $p > 0$ it runs a permutation testing procedure
-- ```-d d```: maximum interval length
-- ```-v```: outputs all the testable patterns
+- ```-i file```: marker (binary or additive encoding) file. It should be matrix of size $n. SNPs \times n. samples$, i.e. with each column being a sample.
+- ```-l file```: labels file. It should be a binary matrix of size $n. samples \times 1$.
+- ```-s file```: SNP names file. It should be a file with $n. SNPs$ rows, containing the names of the SNPs.
+- ```-c file```: covariate file. It should be a matrix of size $n. samples \times 1$ taking values in $\{ 1, \dots, C \}$, with $C$ being the number of covariate classes.
+- ```-m file```: SNP map file. It should be a file with $n. genes$ rows. The first entry of each row should be the the gene name, and the following entries should be the SNPs that are mapped to that gene.
+- ```-e file```: gene interactions file. It should be a file with $n. interactions$ rows. Each row should contain a set of genes that are known to be interacting (biological priors).
+- ```-f level```: target fwer (e.g. 0.05).
+- ```-o or -O file```: output file name, with -o in compressed format and with -O in verbose format.
+- ```-p p```: number $p$ of permutations (default $0$), if $p > 0$ it runs a permutation testing procedure.
+- ```-d d```: maximum SNP interval length in each gene.
+- ```-v```: outputs all the testable patterns.
 
 
 
-### Usage example
+### Usage example (binary data)
 ```
 ./src/hogimine_additive -i data/athaliana/interactome_0kb/avrRpm1/avrRpm1_X.txt -l data/athaliana/interactome_0kb/avrRpm1/avrRpm1_Y.txt -c data/athaliana/covar_snps/avrRpm1/avrRpm1_covar_n2.txt -s data/athaliana/interactome_0kb/avrRpm1/avrRpm1_snpID.txt -m data/athaliana/interactome_0kb/avrRpm1/avrRpm1_snp_map.txt -e data/athaliana/athal_ppi/interactome/AI_interactions_genes.txt -f 0.05 -O out_athaliana
 ```
-
+Output: each pattern is reported on a row, the first column reports the CMH p-value of the pattern, then the interacting genes spanned by the pattern are reported, and finally the SNP positions composing the pattern.
+```
+3.27815e-12; AT3G07040, AT3G25070; Chr3_2227817, Chr3_9133148
+1.33438e-11; AT3G07040; Chr3_2227817
+2.22304e-11; AT3G07040, AT3G25070; Chr3_2227817, Chr3_9132644
+2.22304e-11; AT3G07040, AT5G51450; Chr3_2227817, Chr5_20897395
+...
+```
