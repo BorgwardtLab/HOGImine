@@ -50,3 +50,21 @@ Output: each pattern is reported on a row, the first column reports the CMH p-va
 2.22304e-11; AT3G07040, AT5G51450; Chr3_2227817, Chr5_20897395
 ...
 ```
+
+### Usage example (additive data)
+```
+./src/hogimine_additive -i data/mmusculus/BMC.Mode/BMC.Mode_X_T.txt -l data/mmusculus/BMC.Mode/BMC.Mode_y_bin.txt -c data/mmusculus/BMC.Mode/BMC.Mode_kinship.txt -s data/mmusculus/BMC.Mode/SNPs_ids.txt -m data/mmusculus/BMC.Mode/gene2snps.txt -e data/mmusculus/BMC.Mode/all_int_compl.txt -f 0.05 -O out_mus
+```
+
+Output: each pattern is reported on a row, the first column reports the CMH p-value of the pattern, then the interacting genes spanned by the pattern are reported along with the encoding for the SNPs, and finally the SNP positions composing the pattern.
+
+```
+3.65197e-25; ENSMUSG00000047040 (dominant), ENSMUSG00000048175 (recessive); chr11_96928685, chr15_98155192
+3.65197e-25; ENSMUSG00000047040 (dominant), ENSMUSG00000048175 (recessive); chr11_96930807, chr15_98157791
+...
+4.58913e-25; ENSMUSG00000061298 (dominant), ENSMUSG00000038756 (dominant); chr4_110873242, chr11_96148817
+...
+1.76405e-24; ENSMUSG00000057058 (dominant), ENSMUSG00000022148 (recessive); chr11_96573406, chr11_96584561, chr15_6571463
+1.8372e-24; ENSMUSG00000018672 (dominant), ENSMUSG00000060992 (recessive); chr11_96859685, chr15_103292285
+...
+```

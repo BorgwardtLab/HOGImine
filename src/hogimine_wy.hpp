@@ -62,32 +62,6 @@ public:
         }
         //cout << cnt_process << endl;
     }
-    /*
-    void process_edges2(){
-        ofstream out_stream(outfilename);
-        for(int u=0; u<data->n_genes; u++){
-            for(int v : data->adjList[u]){
-                if(v < u) continue;
-
-                //cout << "Edge " << data->gene_names[u] << " " << data->gene_names[v] << endl;
-                vector<IntervalMap> v1(2);
-                vector<int> v2(2);
-                v1[0] = gene_intervals[u]; v1[1] = gene_intervals[v];
-                v2[0] = u; v2[1] = v;
-                //test_interval_combinations_helper(v1, v2, out_stream);
-                //test_interval_pairs(v1, v2, out_stream);
-                vector<tuple<vector<int>, double>> patterns_tmp = test_interval_combinations_bfs(v1, v2); // only interval info
-                for(auto& a : patterns_tmp){
-                    (get<0>(a)).insert((get<0>(a)).end(), v2.begin(), v2.end()); // add gene info
-                }
-                testable_patterns.insert(testable_patterns.end(), patterns_tmp.begin(), patterns_tmp.end());
-            }
-        }
-        //cout << cnt_process << endl;
-
-    }
-    //*/
-
 
 
     void process_genes(){
@@ -137,143 +111,6 @@ public:
         return intv_map;
     }
 
-    /*
-    int cnts = 0;
-
-    IntervalMap make_gene_intervals_dfs(int gene){
-        pair<int, int> snps = make_pair( data->gene2snps[gene][0], data->gene2snps[gene].size() ); // start, length
-        IntervalMap intv_map = vector<vector<Bitset>>(snps.second);
-
-        for(int start = 0; start < snps.second; start++){
-            intv_map[start] = vector<Bitset>(snps.second - start);
-            Bitset support = Bitset(data->n_trans);
-            int cnt = 0, tmp; // count support
-
-            for(int len = 1; len <= snps.second - start; len++){
-                if(maxlen > 0 && len > maxlen)
-                    break;
-
-                support = support.bitwise_or(data->matrix[snps.first+start+len-1]);
-                if((tmp = support.count()) == cnt){ // this is not enough to get only closed intervals
-                    continue; // not closed
-                }
-                cnt = tmp;
-
-                vector<int> pc_supports = cmh.per_class_supports(support);
-
-                double env = cmh.compute_envelope(pc_supports);
-                cnts++;
-                //cout << gene << " " << start << " " << len << " : " << env << endl;
-                if(!cmh.is_prunable(env)){
-                    intv_map[start][len-1] = support;
-                }
-            }
-        }
-        return intv_map;
-    }
-
-
-    void test_interval_combinations_dfs_helper(vector<IntervalMap>& gene_itvl, vector<int>& gene_ids, ofstream& out_file){
-        vector<pair<int, int>> intv(gene_itvl.size());
-        Bitset supp;
-        test_interval_combinations_dfs_rec(gene_itvl, gene_ids, intv, supp, out_file, 0, gene_itvl.size());
-    }
-
-
-    int test_interval_combinations_dfs_rec(vector<IntervalMap>& gene_itvl, vector<int>& gene_ids, vector<pair<int, int>>& intervals, Bitset& support,
-                                            ofstream& out_file, int depth, int maxdepth)
-    {
-        if(depth == maxdepth){
-            double pvalue = 1.0;
-            double minpv = 1.0;
-            double env = 1.0;
-            cnt_process++;
-            int cas = cmh.process_pattern_env(support, &pvalue, &minpv, &env);
-            if(cas == 0){ // testable
-                out_file << pvalue << "," << minpv;
-                for(int i=0; i<maxdepth; i++){
-                    out_file << "," << data->gene_names[gene_ids[i]] << "," << intervals[i].first << "_" << intervals[i].second;
-                }
-                out_file << endl;
-            }
-            if(cas == 2) return 1; // prunable
-            return 0; // not prunable
-        }
-
-        Bitset old_supp = support;
-        int n_snps = data->gene2snps[gene_ids[depth]].size();
-
-        for(int start=0; start<n_snps; start++){
-            for(int len=1; len <= n_snps-start; len++){
-                if(gene_itvl[depth][start][len-1].n > 0){
-                    if(depth == 0){
-                        support = gene_itvl[depth][start][len-1];
-                    }
-                    else{
-                        support = support.bitwise_or(gene_itvl[depth][start][len-1]);
-                    }
-
-                    if(depth < maxdepth-1){
-                        vector<int> per_class_supps = cmh.per_class_supports(support);
-                        double envelope = cmh.compute_envelope(per_class_supps);
-                        if(envelope > cmh.deltas[cmh.delta_id]){
-                            break;
-                        }
-                    }
-
-
-                    intervals[depth] = make_pair(start, len);
-                    int prunable = test_interval_combinations_dfs_rec(gene_itvl, gene_ids, intervals, support, out_file, depth+1, maxdepth);
-                    support = old_supp;
-                    if(prunable) // this works only on the last level of recursion
-                        break;
-                }
-            }
-        }
-        return 0;
-    }
-
-    void test_interval_pairs(vector<IntervalMap>& gene_itvl, vector<int>& gene_ids, ofstream& out_file){
-        int n_snps0 = data->gene2snps[gene_ids[0]].size();
-        int n_snps1 = data->gene2snps[gene_ids[1]].size();
-
-        for(int start0=0; start0<n_snps0; start0++){
-            vector<int> prunable(n_snps1, n_snps1+1);
-            for(int len0=1; len0 <= n_snps0-start0; len0++){
-                if(gene_itvl[0][start0][len0-1].n == 0) continue;
-
-                for(int start1=0; start1<n_snps1; start1++){
-                    for(int len1=1; len1 <= n_snps1-start1; len1++){
-                        if (len1 >= prunable[start1]) break;
-                        if(gene_itvl[1][start1][len1-1].n == 0)continue;
-
-                        Bitset support = gene_itvl[0][start0][len0-1].bitwise_or(gene_itvl[1][start1][len1-1]);
-                        double pvalue = 1.0;
-                        double minpv = 1.0;
-                        double env = 1.0;
-                        int cas = cmh.process_pattern_env(support, &pvalue, &minpv, &env);
-                        cnt_process++;
-                        if(cas == 0){ // testable
-                            out_file << pvalue << "," << minpv;
-                            out_file << "," << data->gene_names[gene_ids[0]] << "," << start0 << "_" << len0;
-                            out_file << "," << data->gene_names[gene_ids[1]] << "," << start1 << "_" << len1;
-                            out_file << endl;
-                        }
-                        if(cas == 2){
-                            prunable[start1] = len1;
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    //*/
-
-
-
-
 
 
     void create_len1_intervals(FrontierMap& frontier, vector<vector<IntervalMap>>& gene_itvl, vector<int>& gene_ids,
@@ -308,7 +145,7 @@ public:
             support = old_supp;
         }
         // homozygote
-        for(int start=0; data->is_additive && start<n_snps; start++){
+        for(int start=0; (bool)(data->is_additive) && (start<n_snps); start++){
             if(depth == 0){
                 support = gene_itvl[1][depth][start][0];
             }
@@ -348,7 +185,7 @@ public:
 
                     int starti = (keyi&((1<<30)-1))>>14; int leni = keyi&((1<<14)- 1); int isHomo = keyi>>30;
                     if(i > 0 && len0 > 1) continue; // this is to avoid generating the same pattern multiple times, but still generate all patterns
-                    if( gene_itvl[isHomo][i][starti][leni].n == 0)continue; // check if [start, len+1] is in gene_itvl
+                    if( starti >= gene_itvl[isHomo][i].size() || leni >= gene_itvl[isHomo][i][starti].size() || gene_itvl[isHomo][i][starti][leni].n == 0)continue; // check if [start, len+1] is in gene_itvl
 
                     key[i] += (1<<14); // increase by 1 starting position and keep len
                     auto it = frontier.find(key);

@@ -11,7 +11,7 @@ class Data{
 public:
     int n_trans;
     int n_snps;
-    int is_additive;
+    int is_additive = 0;
     vector<Bitset> matrix;
     vector<Bitset> matrix2;
     Bitset labels;
