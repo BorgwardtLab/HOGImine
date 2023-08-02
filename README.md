@@ -22,6 +22,11 @@ cd src
 make
 ```
 
+To decompress the SNP data in the *data/mmusculus* folder, use the following command. 
+```
+unzip data/mmusculus/BMC.Mode/BMC.Mode_X_T.txt.zip -d data/mmusculus/BMC.Mode/
+```
+
 ### Options
 The options for HOGImine are:
 - ```-i file```: marker (binary or additive encoding) file. It should be matrix of size $n. SNPs \times n. samples$, i.e. with each column being a sample.
@@ -40,7 +45,7 @@ The options for HOGImine are:
 
 ### Usage example (binary data)
 ```
-./src/hogimine_additive -i data/athaliana/interactome_0kb/avrRpm1/avrRpm1_X.txt -l data/athaliana/interactome_0kb/avrRpm1/avrRpm1_Y.txt -c data/athaliana/covar_snps/avrRpm1/avrRpm1_covar_n2.txt -s data/athaliana/interactome_0kb/avrRpm1/avrRpm1_snpID.txt -m data/athaliana/interactome_0kb/avrRpm1/avrRpm1_snp_map.txt -e data/athaliana/athal_ppi/interactome/AI_interactions_genes.txt -f 0.05 -O out_athaliana
+./src/hogimine_additive -i data/athaliana/interactome_0kb/avrRpm1/avrRpm1_X.txt -l data/athaliana/interactome_0kb/avrRpm1/avrRpm1_Y.txt -c data/athaliana/covar_snps/avrRpm1/avrRpm1_covar_n2.txt -s data/athaliana/interactome_0kb/avrRpm1/avrRpm1_snpID.txt -m data/athaliana/interactome_0kb/avrRpm1/avrRpm1_snp_map.txt -e data/athaliana/athal_ppi/genes+edges+3cliques+complexes.txt -f 0.05 -O out_athaliana
 ```
 Output: each pattern is reported on a row, the first column reports the CMH p-value of the pattern, then the interacting genes spanned by the pattern are reported, and finally the SNP positions composing the pattern.
 ```
