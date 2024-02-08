@@ -73,3 +73,6 @@ Output: each pattern is reported on a row, the first column reports the CMH p-va
 1.8372e-24; ENSMUSG00000018672 (dominant), ENSMUSG00000060992 (recessive); chr11_96859685, chr15_103292285
 ...
 ```
+
+### Acknowledgements
+This project has received funding from the European Union’s Horizon 2020 research and innovation programme under the Marie Sklodowska-Curie grant agreement No 813533 (K.B.).
